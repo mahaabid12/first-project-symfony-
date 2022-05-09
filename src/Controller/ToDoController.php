@@ -34,9 +34,9 @@ class ToDoController extends AbstractController
 
 
     
-    #[Route('/add/{name}/{content}', 
-    name: 'addtodod', 
-    defaults: ['content'=>'sf6'])]
+    #[Route('/add/{name?test}/{content?test}', 
+    name: 'addtodod')]
+    //defaults: ['content'=>'sf6','name'=>'techwall'])]
     public function addTodo (SessionInterface $session,$name,$content) : RedirectResponse
     {
         if ($session->has('tasks')){
@@ -114,6 +114,9 @@ class ToDoController extends AbstractController
         return $this->redirectToRoute('todo');
 
     }
+
+    
+
 
     
     

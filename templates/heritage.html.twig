@@ -4,10 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ekhdem nayek</title>
+    <title>{% block titreDuDocument %} titre par défaut {% endblock %}</title>
 </head>
 <body>
+
+    header 
+
+    <hr>
+    {% block corpDuDocument  %}
+contenu par défaut du document 
+    {% endblock %}
+    <hr>
+
+    Footer 
+
     
-    <img src="{{ asset('assets/image/') ~ path | defaultImage}}" alt="just an image" height="400" width="400">
 </body>
 </html>
