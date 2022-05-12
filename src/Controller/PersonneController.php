@@ -4,10 +4,12 @@ namespace App\Controller;
 
 
 use App\Entity\Personne;
+use App\Form\PersonneType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\ManagerRegistry as DoctrineManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,6 +40,8 @@ class PersonneController extends AbstractController
         
     }
 
+ 
+
 
     #[Route('/personne/{page<\d+>?1}/{nbre?12}', name: 'personne')]
     public function index (ManagerRegistry $doctrine,$page, $nbre): Response
@@ -48,7 +52,8 @@ class PersonneController extends AbstractController
 
         //page 1 ==>0->9 
         //page 2 ==>10->19  
-        $persons=$repisotory->findBy([],['name'=>'ASC'],$nbre,($page-1)*$nbre ); 
+        $persons=$repisotory->findBy([],['name'=>'ASC'],$nbre,(($page-1)*$nbre) ); 
+    
         return $this->render('personne/personne.html.twig',[
             'persons'=>$persons,
             'nbrePage'=>$nbrePage, 
@@ -77,14 +82,43 @@ class PersonneController extends AbstractController
 
 
     #[Route('/personne/add ', name: 'addPersoone')]
-    public function addPersonne (ManagerRegistry $doctrine): Response
+    public function addPersonne (ManagerRegistry $doctrine, Request $request): Response
     {
 
         $entityManager = $doctrine->getManager(); 
         $personne= new Personne();
-        $personne->setFirstname('maha') ; 
-        $personne->setName('abid'); 
-        $personne->setAge(20); 
+
+        $personne->setFirstname("maha");
+        //tout ce que on a tapé dans le formulaire o va le récuppérer dans l'objet personne 
+        $form=$this->createForm(PersonneType::class, $personne);
+        $form->remove('createdAt'); 
+        $form->remove('updatedAt'); 
+
+        //la formulaire va traiter la requete 
+        $form->handleRequest($request);
+        if($form->isSubmitted()){ 
+            //$form->getData()
+            $entityManager = $doctrine->getManager(); 
+            $entityManager->persist($personne);
+
+            $entityManager->flush();
+            $this->addFlash("success","Personne added ");
+            return $this->redirectToRoute('personne');
+            
+
+        }else{
+            return $this->render('personne/add.html.twig', [
+                'form' => $form->createView(),
+            ]);
+
+        }
+        
+    
+
+
+        //$personne->setFirstname('maha') ; 
+        //$personne->setName('abid'); 
+        /*$personne->setAge(20); 
         $personne->setMood("kizebi");
 
         $personne2= new Personne();
@@ -106,13 +140,11 @@ class PersonneController extends AbstractController
         $entityManager->persist($personne2); 
         $entityManager->persist($personne3); 
 
-        //excecution
-        $entityManager->flush(); 
+        //excecution*/
+       
 
 
-        return $this->render('personne/index.html.twig', [
-            'personne' => $personne,
-        ]);
+       
     }
 
 
@@ -141,3 +173,5 @@ class PersonneController extends AbstractController
 
     
 }
+
+

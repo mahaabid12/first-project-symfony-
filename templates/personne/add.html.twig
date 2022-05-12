@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Personne{% endblock %}
+
+{% block body %}
+
+{% for message in app.session.flashbag.get('success') %}
+ <div style="color:green">
+    {{message}}
+</div>
+{% endfor %}
+
+{{form_start(form)}}
+<div class="row">
+    <div class="col">{{form_row(form.firstname)}}</div>
+    <div class="col">{{form_row(form.name)}}</div>
+</div>
+{{form_rest(form)}}
+{% endblock %}
